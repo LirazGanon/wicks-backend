@@ -15,6 +15,19 @@ async function getWaps(req, res) {
     res.status(500).send({ err: 'Failed to get waps' })
   }
 }
+async function getTemplates(req, res) {
+  try {
+    logger.debug('Getting templates')
+    const filterBy = {
+      txt: req.query.txt || ''
+    }
+    const templates = await wapService.query(filterBy)
+    res.json(templates)
+  } catch (err) {
+    logger.error('Failed to get templates', err)
+    res.status(500).send({ err: 'Failed to get templates' })
+  }
+}
 
 async function getWapById(req, res) {
   try {
@@ -99,6 +112,7 @@ async function removeWapMsg(req, res) {
 
 module.exports = {
   getWaps,
+  getTemplates,
   getWapById,
   addWap,
   updateWap,

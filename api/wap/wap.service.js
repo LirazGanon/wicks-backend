@@ -2,7 +2,7 @@ const dbService = require('../../services/db.service')
 const logger = require('../../services/logger.service')
 const utilService = require('../../services/util.service')
 const ObjectId = require('mongodb').ObjectId
-
+// TODO: FILTER BY USER ID
 async function query(filterBy={txt:''}) {
     try {
         const criteria = {
