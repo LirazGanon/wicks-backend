@@ -5,10 +5,10 @@ const logger = require('../../services/logger.service')
 async function getCmps(req, res) {
   try {
     logger.debug('Getting Cmps')
-    const filterBy = {
-      txt: req.query.txt || ''
-    }
-    const cmps = await cmpService.query(filterBy)
+    // const filterBy = {
+    //   txt: req.query.txt || ''
+    // }
+    const cmps = await cmpService.query()
     res.json(cmps)
   } catch (err) {
     logger.error('Failed to get cmps', err)

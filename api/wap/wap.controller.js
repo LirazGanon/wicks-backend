@@ -1,4 +1,5 @@
 const wapService = require('./wap.service.js')
+const templateService = require('./template.service.js')
 
 const logger = require('../../services/logger.service')
 
@@ -17,15 +18,46 @@ async function getWaps(req, res) {
 }
 async function getTemplates(req, res) {
   try {
-    logger.debug('Getting templates')
-    const filterBy = {
-      txt: req.query.txt || ''
-    }
-    const templates = await wapService.query(filterBy)
+    // logger.debug('Getting templates')
+    // const filterBy = {
+    //   txt: req.query.txt || ''
+    // }
+    const templates = await templateService.query()
     res.json(templates)
   } catch (err) {
     logger.error('Failed to get templates', err)
     res.status(500).send({ err: 'Failed to get templates' })
+  }
+}
+
+async function getTemplateById(req, res) {
+  console.log('hi ', req.params.id)
+  try {
+    const templateId = req.params.id
+    const template = await templateService.getById(templateId)
+    res.json(template)
+  } catch (err) {
+    logger.error('Failed to get wap', err)
+    res.status(500).send({ err: 'Failed to get wap' })
+  }
+}
+
+async function getTemplateToEdit(req, res) {
+  try {
+    const id = req.params.id
+    let wap = await wapService.getById(id)
+    console.log('wap', wap, 'wap')
+    if(!wap){
+      const template = await templateService.getById(id)
+      delete template._id
+      wap = await wapService.add(JSON.parse(JSON.stringify(template)))
+      console.log(wap)
+      res.json(wap)
+    }
+    else res.json(wap)
+  } catch (err) {
+    logger.error('Failed to get wap', err)
+    res.status(500).send({ err: 'Failed to get template to edit' })
   }
 }
 
@@ -118,5 +150,7 @@ module.exports = {
   updateWap,
   removeWap,
   addWapMsg,
-  removeWapMsg
+  removeWapMsg,
+  getTemplateById,
+  getTemplateToEdit
 }

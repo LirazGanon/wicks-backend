@@ -3,7 +3,8 @@ const logger = require('../../services/logger.service')
 const utilService = require('../../services/util.service')
 const ObjectId = require('mongodb').ObjectId
 // TODO: FILTER BY USER ID
-async function query(filterBy={txt:''}) {
+
+async function query(filterBy = { txt: '' }) {
     try {
         const criteria = {
         }
@@ -15,14 +16,25 @@ async function query(filterBy={txt:''}) {
         throw err
     }
 }
+async function getById(templateId) {
+    try {
+        console.log(templateId)
+        const collection = await dbService.getCollection('template')
+        const template = collection.findOne({ _id: ObjectId(templateId) })
+        return template
+    } catch (err) {
+        logger.error(`while finding wap ${templateId}`, err)
+        throw err
+    }
+}
 
 
 module.exports = {
-    remove,
+    // remove,
     query,
     getById,
-    add,
-    update,
-    addWapMsg,
-    removeWapMsg
+    // add,
+    // update,
+    // addWapMsg,
+    // removeWapMsg
 }

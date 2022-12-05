@@ -1,7 +1,7 @@
 const express = require('express')
 const { requireAuth, requireAdmin } = require('../../middlewares/requireAuth.middleware')
 const { log } = require('../../middlewares/logger.middleware')
-const { getTemplates, getWaps, getWapById, addWap, updateWap, removeWap, addWapMsg, removeWapMsg } = require('./wap.controller')
+const { getTemplateToEdit,getTemplates, getTemplateById, getWaps, getWapById, addWap, updateWap, removeWap, addWapMsg, removeWapMsg } = require('./wap.controller')
 const router = express.Router()
 
 // middleware that is specific to this router
@@ -9,7 +9,10 @@ const router = express.Router()
 
 router.get('/', log, getWaps)
 router.get('/template', log, getTemplates)
+router.get('/template/edit/:id',getTemplateToEdit)
+router.get('/template/:id',getTemplateById)
 router.get('/:id', getWapById)
+
 router.post('/', requireAuth, addWap)
 router.put('/:id', requireAuth, updateWap)
 router.delete('/:id', requireAuth, removeWap)

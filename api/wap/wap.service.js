@@ -2,6 +2,7 @@ const dbService = require('../../services/db.service')
 const logger = require('../../services/logger.service')
 const utilService = require('../../services/util.service')
 const ObjectId = require('mongodb').ObjectId
+
 // TODO: FILTER BY USER ID
 async function query(filterBy={txt:''}) {
     try {
@@ -9,7 +10,7 @@ async function query(filterBy={txt:''}) {
             // vendor: { $regex: filterBy.txt, $options: 'i' }
         }
         const collection = await dbService.getCollection('wap')
-        var waps = await collection.find(criteria).toArray()
+        var waps = await collection.find().toArray()
         return waps
     } catch (err) {
         logger.error('cannot find waps', err)
@@ -21,6 +22,18 @@ async function getById(wapId) {
     try {
         const collection = await dbService.getCollection('wap')
         const wap = collection.findOne({ _id: ObjectId(wapId) })
+        return wap
+    } catch (err) {
+        logger.error(`while finding wap ${wapId}`, err)
+        throw err
+    }
+}
+async function getTemplateToEdit(templateId) {
+    try {
+        const collection = await dbService.getCollection('template')
+        const template = collection.findOne({ _id: ObjectId(templateId) })
+        // making clone of the temlate and saving it in the wap collection
+        const wap = add(JSON.parse(JSON.stringify(template)))
         return wap
     } catch (err) {
         logger.error(`while finding wap ${wapId}`, err)
@@ -95,5 +108,6 @@ module.exports = {
     add,
     update,
     addWapMsg,
-    removeWapMsg
+    removeWapMsg,
+    getTemplateToEdit
 }
