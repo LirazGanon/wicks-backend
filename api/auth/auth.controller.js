@@ -11,6 +11,8 @@ async function login(req, res) {
         res.json(user)
     } catch (err) {
         logger.error('Failed to Login ' + err)
+        // console.log(err)
+        // res.send({ err: 'Failed to Login' })
         res.status(401).send({ err: 'Failed to Login' })
     }
 }

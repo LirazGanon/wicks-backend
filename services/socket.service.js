@@ -42,13 +42,28 @@ function setupSocketAPI(http) {
             logger.info(`Removing socket.userId for socket [id: ${socket.id}]`)
             delete socket.userId
         })
-
-        socket.on('send-pointer-pos', ({mouseLoc, id}) => {
-            console.log(mouseLoc)
+        socket.on('user-entered-editor', wapId => {
+            if (socket.currEditor === wapId) return
+            if (socket.currEditor) {
+                socket.leave(socket.wapId)
+            }
+            socket.join(wapId)
+            socket.currEditor = wapId
+            console.log(socket.currEditor, 'getting in a room')
+        })
+        // improve the id and everything
+        socket.on('send-pointer-pos', ({ mouseLoc, id }) => {
             socket.broadcast.emit('get-pointer-pos', mouseLoc, id)
         })
-        socket.on('send-update-wap', (wap)=>{
-        socket.broadcast.emit('get-update-wap', wap)
+        socket.on('set-wap', (wap) => {
+
+            console.log(socket.currEditor, 'i am here and guy too')
+            broadcast({
+                type: 'updated-wap',
+                data: wap,
+                room: socket.currEditor,
+                userId: socket.id
+            })
         })
 
     })
@@ -82,13 +97,18 @@ async function broadcast({ type, data, room = null, userId }) {
     if (room && excludedSocket) {
         logger.info(`Broadcast to room ${room} excluding user: ${userId}`)
         excludedSocket.broadcast.to(room).emit(type, data)
+        console.log('ia m 1')
     } else if (excludedSocket) {
         logger.info(`Broadcast to all excluding user: ${userId}`)
         excludedSocket.broadcast.emit(type, data)
+        console.log('ia m 12')
     } else if (room) {
+        console.log('ia m 123')
         logger.info(`Emit to room: ${room}`)
         gIo.to(room).emit(type, data)
     } else {
+        // console.log('i will keep going dude')
+        // console.log(type)
         logger.info(`Emit to all`)
         gIo.emit(type, data)
     }

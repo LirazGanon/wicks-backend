@@ -1,5 +1,6 @@
 const wapService = require('./wap.service.js')
 const templateService = require('./template.service.js')
+const {emitTo,broadcast} = require('../../services/socket.service')
 
 const logger = require('../../services/logger.service')
 
@@ -46,12 +47,11 @@ async function getTemplateToEdit(req, res) {
   try {
     const id = req.params.id
     let wap = await wapService.getById(id)
-    console.log('wap', wap, 'wap')
     if(!wap){
       const template = await templateService.getById(id)
       delete template._id
       wap = await wapService.add(JSON.parse(JSON.stringify(template)))
-      console.log(wap)
+      
       res.json(wap)
     }
     else res.json(wap)
@@ -91,6 +91,7 @@ async function updateWap(req, res) {
   try {
     const wap = req.body
     const updatedWap = await wapService.update(wap)
+    // broadcast({data:updatedWap,type:'updated-wap',id:soketId })
     res.json(updatedWap)
   } catch (err) {
     logger.error('Failed to update wap', err)
