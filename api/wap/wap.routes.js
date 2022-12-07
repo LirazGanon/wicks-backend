@@ -9,7 +9,7 @@ const router = express.Router()
 
 router.get('/', log, getWaps)
 router.get('/template', log, getTemplates)
-router.get('/template/edit/:id',getTemplateToEdit)
+router.get('/template/edit/:id/',getTemplateToEdit)
 router.get('/template/:id',getTemplateById)
 
 // router.get('user/:userId',getWapByUserId )

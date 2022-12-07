@@ -112,14 +112,16 @@ async function add(wap) {
 
 async function update(wap) {
     try {
-        const wapToSave = {
-            cmps: wap.cmps,
-        }
         const collection = await dbService.getCollection('wap')
-        await collection.updateOne({ _id: ObjectId(wap._id) }, { $set: wapToSave })
+        wap = JSON.parse(JSON.stringify(wap))
+        const id = wap._id
+        delete wap._id
+        await collection.updateOne({ _id: ObjectId(id) }, { $set: wap })
+        console.log(wap, 'kabbucha')
         return wap
     } catch (err) {
-        logger.error(`cannot update wap ${wapId}`, err)
+        console.log(err);
+        // logger.error(`cannot update wap ${wapId}`, err)
         throw err
     }
 }

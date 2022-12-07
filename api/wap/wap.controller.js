@@ -48,6 +48,7 @@ async function getTemplateToEdit(req, res) {
   try {
     const id = req.params.id
     let wap = await wapService.getById(id)
+
     if (!wap) {
       const template = await templateService.getById(id)
       delete template._id
@@ -101,8 +102,11 @@ async function addWap(req, res) {
 
 async function updateWap(req, res) {
   try {
+    console.log('i am at before serivce updateWap')
     const wap = req.body
+    
     const updatedWap = await wapService.update(wap)
+    console.log('i am at after serivce updateWap')
     // broadcast({data:updatedWap,type:'updated-wap',id:soketId })
     res.json(updatedWap)
   } catch (err) {

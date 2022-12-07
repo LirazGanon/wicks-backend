@@ -98,16 +98,16 @@ async function emitToUser({ type, data, userId }) {
 // Optionally, broadcast to a room / to all
 async function broadcast({ type, data, room = null, userId }) {
     userId = userId.toString()
-    logger.info(`Broadcasting event: ${type}`)
+    // logger.info(`Broadcasting event: ${type}`)
     const excludedSocket = await _getUserSocket(userId)
     if (room && excludedSocket) {
-        logger.info(`Broadcast to room ${room} excluding user: ${userId}`)
+        // logger.info(`Broadcast to room ${room} excluding user: ${userId}`)
         excludedSocket.broadcast.to(room).emit(type, data)
     } else if (excludedSocket) {
-        logger.info(`Broadcast to all excluding user: ${userId}`)
+        // logger.info(`Broadcast to all excluding user: ${userId}`)
         excludedSocket.broadcast.emit(type, data)
     } else if (room) {
-        logger.info(`Emit to room: ${room}`)
+        // logger.info(`Emit to room: ${room}`)
         gIo.to(room).emit(type, data)
     } else {
         // console.log(type)
