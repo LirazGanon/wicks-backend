@@ -1,6 +1,6 @@
 const wapService = require('./wap.service.js')
 const templateService = require('./template.service.js')
-const {emitTo,broadcast} = require('../../services/socket.service')
+const { emitTo, broadcast } = require('../../services/socket.service')
 
 const logger = require('../../services/logger.service')
 
@@ -8,6 +8,7 @@ async function getWaps(req, res) {
   try {
     logger.debug('Getting Waps')
     const filterBy = {
+      userId: req.query.userId || '',
       txt: req.query.txt || ''
     }
     const waps = await wapService.query(filterBy)
@@ -47,11 +48,11 @@ async function getTemplateToEdit(req, res) {
   try {
     const id = req.params.id
     let wap = await wapService.getById(id)
-    if(!wap){
+    if (!wap) {
       const template = await templateService.getById(id)
       delete template._id
       wap = await wapService.add(JSON.parse(JSON.stringify(template)))
-      
+
       res.json(wap)
     }
     else res.json(wap)
@@ -71,20 +72,20 @@ async function getWapById(req, res) {
     res.status(500).send({ err: 'Failed to get wap' })
   }
 }
-async function getWapByUserId(req, res) {
-  try {
-    console.log('asd;lkd',req.params.id )
-    const userId = req.params.id
-    const wap = await wapService.getByUserId(userId)
-    res.json(wap)
-  } catch (err) {
-    logger.error('Failed to get wap', err)
-    res.status(500).send({ err: 'Failed to get wap' })
-  }
-}
+// async function getWapByUserId(req, res) {
+//   try {
+//     console.log('asd;lkd',req.params.id )
+//     const userId = req.params.id
+//     const wap = await wapService.getByUserId(userId)
+//     res.json(wap)
+//   } catch (err) {
+//     logger.error('Failed to get wap', err)
+//     res.status(500).send({ err: 'Failed to get wap' })
+//   }
+// }
 
 async function addWap(req, res) {
-  const {loggedinUser} = req
+  const { loggedinUser } = req
 
   try {
     const wap = req.body
@@ -123,7 +124,7 @@ async function removeWap(req, res) {
 }
 
 async function addWapMsg(req, res) {
-  const {loggedinUser} = req
+  const { loggedinUser } = req
   try {
     const wapId = req.params.id
     const msg = {
@@ -140,10 +141,10 @@ async function addWapMsg(req, res) {
 }
 
 async function removeWapMsg(req, res) {
-  const {loggedinUser} = req
+  const { loggedinUser } = req
   try {
     const wapId = req.params.id
-    const {msgId} = req.params
+    const { msgId } = req.params
 
     const removedId = await wapService.removeWapMsg(wapId, msgId)
     res.send(removedId)
@@ -165,5 +166,4 @@ module.exports = {
   removeWapMsg,
   getTemplateById,
   getTemplateToEdit,
-  getWapByUserId
 }

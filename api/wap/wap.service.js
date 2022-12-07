@@ -4,13 +4,15 @@ const utilService = require('../../services/util.service')
 const ObjectId = require('mongodb').ObjectId
 
 // TODO: FILTER BY USER ID
-async function query(filterBy={txt:''}) {
+async function query(filterBy) {
+    const criteria = _buildCriteria(filterBy)
+    console.log()
     try {
-        const criteria = {
-            // vendor: { $regex: filterBy.txt, $options: 'i' }
-        }
+        // const criteria = {
+        //     // vendor: { $regex: filterBy.txt, $options: 'i' }
+        // }
         const collection = await dbService.getCollection('wap')
-        var waps = await collection.find().toArray()
+        var waps = await collection.find(criteria).toArray()
         return waps
     } catch (err) {
         logger.error('cannot find waps', err)
