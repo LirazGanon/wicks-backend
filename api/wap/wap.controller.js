@@ -71,6 +71,17 @@ async function getWapById(req, res) {
     res.status(500).send({ err: 'Failed to get wap' })
   }
 }
+async function getWapByUserId(req, res) {
+  try {
+    console.log('asd;lkd',req.params.id )
+    const userId = req.params.id
+    const wap = await wapService.getByUserId(userId)
+    res.json(wap)
+  } catch (err) {
+    logger.error('Failed to get wap', err)
+    res.status(500).send({ err: 'Failed to get wap' })
+  }
+}
 
 async function addWap(req, res) {
   const {loggedinUser} = req
@@ -153,5 +164,6 @@ module.exports = {
   addWapMsg,
   removeWapMsg,
   getTemplateById,
-  getTemplateToEdit
+  getTemplateToEdit,
+  getWapByUserId
 }

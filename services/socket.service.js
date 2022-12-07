@@ -52,8 +52,14 @@ function setupSocketAPI(http) {
             console.log(socket.currEditor, 'getting in a room')
         })
         // improve the id and everything
-        socket.on('send-pointer-pos', ({ mouseLoc, id }) => {
-            socket.broadcast.emit('get-pointer-pos', mouseLoc, id)
+        socket.on('user-mouse-move', (data) => {
+            broadcast({
+                type: 'mouse-move',
+                data: data,
+                room: socket.currEditor,
+                userId: socket.id
+            })
+
         })
         socket.on('set-wap', (wap) => {
 
@@ -91,9 +97,9 @@ async function emitToUser({ type, data, userId }) {
 // Optionally, broadcast to a room / to all
 async function broadcast({ type, data, room = null, userId }) {
     userId = userId.toString()
-
     logger.info(`Broadcasting event: ${type}`)
     const excludedSocket = await _getUserSocket(userId)
+    console.log(excludedSocket)
     if (room && excludedSocket) {
         logger.info(`Broadcast to room ${room} excluding user: ${userId}`)
         excludedSocket.broadcast.to(room).emit(type, data)
@@ -103,11 +109,10 @@ async function broadcast({ type, data, room = null, userId }) {
         excludedSocket.broadcast.emit(type, data)
         console.log('ia m 12')
     } else if (room) {
-        console.log('ia m 123')
+        console.log('ia m 123' , data)
         logger.info(`Emit to room: ${room}`)
         gIo.to(room).emit(type, data)
     } else {
-        // console.log('i will keep going dude')
         // console.log(type)
         logger.info(`Emit to all`)
         gIo.emit(type, data)
@@ -115,8 +120,12 @@ async function broadcast({ type, data, room = null, userId }) {
 }
 
 async function _getUserSocket(userId) {
+    console.log('userId', userId)
     const sockets = await _getAllSockets()
-    const socket = sockets.find(s => s.userId === userId)
+    const socket = sockets.find(s => {
+
+        console.log(s.userId )
+        s.userId === userId})
     return socket
 }
 async function _getAllSockets() {

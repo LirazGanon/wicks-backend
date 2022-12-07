@@ -28,6 +28,18 @@ async function getById(wapId) {
         throw err
     }
 }
+async function getByUserId(userId) {
+    try {
+        const collection = await dbService.getCollection('wap')
+        const wap = collection.findOne({ createdBy:{_id:ObjectId(userId) }})
+        console.log(wap)
+        return wap
+    } catch (err) {
+        logger.error(`while finding wap ${wapId}`, err)
+        throw err
+    }
+}
+
 async function getTemplateToEdit(templateId) {
     try {
         const collection = await dbService.getCollection('template')
