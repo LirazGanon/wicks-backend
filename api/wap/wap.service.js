@@ -28,17 +28,50 @@ async function getById(wapId) {
         throw err
     }
 }
-async function getByUserId(userId) {
-    try {
-        const collection = await dbService.getCollection('wap')
-        const wap = collection.findOne({ createdBy:{_id:ObjectId(userId) }})
-        console.log(wap)
-        return wap
-    } catch (err) {
-        logger.error(`while finding wap ${wapId}`, err)
-        throw err
+// async function getByUserId(userId) {
+//     try {
+//         const collection = await dbService.getCollection('wap')
+//         const wap = collection.find({ "createdBy._id":ObjectId(userId) })
+//         console.log(wap)
+//         return wap
+//     } catch (err) {
+//         logger.error(`while finding wap ${wapId}`, err)
+//         throw err
+//     }
+// }
+function _buildCriteria(
+    filterBy = {
+      isPublic: undefined,
+      userId: '',
+      isTemplate: undefined,
+      fullname: '',
     }
-}
+  ) {
+    const { isPublic, userId, isTemplate, fullname } = filterBy
+  
+    const criteria = {}
+  
+    if (isPublic !== undefined) {
+      criteria.isPublic = true
+    }
+  
+    if (isTemplate !== undefined) {
+      criteria.isTemplate = true
+    }
+  
+    if (userId) {
+      // criteria.createdBy = { _id: userId }
+      console.log('userId')
+      criteria['createdBy._id'] = userId
+    }
+  
+    if (fullname) {
+      criteria['createdBy.fullname'] = fullname
+    }
+  
+    return criteria
+  }
+  
 
 async function getTemplateToEdit(templateId) {
     try {

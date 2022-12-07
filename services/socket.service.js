@@ -52,10 +52,11 @@ function setupSocketAPI(http) {
             console.log(socket.currEditor, 'getting in a room')
         })
         // improve the id and everything
-        socket.on('user-mouse-move', (data) => {
+        socket.on('user-mouse-move', (pointerLoc) => {
+            const data = {id:socket.id, loc:pointerLoc}
             broadcast({
                 type: 'mouse-move',
-                data: data,
+                data,
                 room: socket.currEditor,
                 userId: socket.id
             })
@@ -99,17 +100,13 @@ async function broadcast({ type, data, room = null, userId }) {
     userId = userId.toString()
     logger.info(`Broadcasting event: ${type}`)
     const excludedSocket = await _getUserSocket(userId)
-    console.log(excludedSocket)
     if (room && excludedSocket) {
         logger.info(`Broadcast to room ${room} excluding user: ${userId}`)
         excludedSocket.broadcast.to(room).emit(type, data)
-        console.log('ia m 1')
     } else if (excludedSocket) {
         logger.info(`Broadcast to all excluding user: ${userId}`)
         excludedSocket.broadcast.emit(type, data)
-        console.log('ia m 12')
     } else if (room) {
-        console.log('ia m 123' , data)
         logger.info(`Emit to room: ${room}`)
         gIo.to(room).emit(type, data)
     } else {
@@ -120,12 +117,10 @@ async function broadcast({ type, data, room = null, userId }) {
 }
 
 async function _getUserSocket(userId) {
-    console.log('userId', userId)
-    const sockets = await _getAllSockets()
-    const socket = sockets.find(s => {
 
-        console.log(s.userId )
-        s.userId === userId})
+    const sockets = await _getAllSockets()
+
+    const socket = sockets.find(s => s.id === userId)
     return socket
 }
 async function _getAllSockets() {
