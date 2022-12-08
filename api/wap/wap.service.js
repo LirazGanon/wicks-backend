@@ -123,6 +123,7 @@ async function add(wap) {
 
 async function update(wap) {
     try {
+        console.log(wap)
         const collection = await dbService.getCollection('wap')
         wap = JSON.parse(JSON.stringify(wap))
         const id = wap._id

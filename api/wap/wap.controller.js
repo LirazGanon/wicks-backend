@@ -118,6 +118,8 @@ async function updateWap(req, res) {
     
     const updatedWap = await wapService.update(wap)
     console.log('i am at after serivce updateWap')
+    console.log(wap._id)
+    console.log(wap.usersData.contacts)
     // broadcast({data:updatedWap,type:'updated-wap',id:soketId })
     res.json(updatedWap)
   } catch (err) {
