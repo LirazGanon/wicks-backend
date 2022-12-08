@@ -30,6 +30,17 @@ async function getById(wapId) {
         throw err
     }
 }
+async function getByName(name) {
+    try {
+        console.log(name)
+        const collection = await dbService.getCollection('wap')
+        const wap = collection.findOne({ pathName: name })
+        return wap
+    } catch (err) {
+        logger.error(`while finding wap ${wapId}`, err)
+        throw err
+    }
+}
 // async function getByUserId(userId) {
 //     try {
 //         const collection = await dbService.getCollection('wap')
@@ -157,5 +168,6 @@ module.exports = {
     update,
     addWapMsg,
     removeWapMsg,
-    getTemplateToEdit
+    getTemplateToEdit,
+    getByName
 }

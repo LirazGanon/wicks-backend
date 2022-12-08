@@ -65,8 +65,19 @@ async function getTemplateToEdit(req, res) {
 
 async function getWapById(req, res) {
   try {
+    console.log(req.params, 'liraz')
     const wapId = req.params.id
     const wap = await wapService.getById(wapId)
+    res.json(wap)
+  } catch (err) {
+    logger.error('Failed to get wap', err)
+    res.status(500).send({ err: 'Failed to get wap' })
+  }
+}
+async function getWapByName(req, res) {
+  try {
+    const name = req.params.name
+    const wap = await wapService.getByName(name)
     res.json(wap)
   } catch (err) {
     logger.error('Failed to get wap', err)
@@ -170,4 +181,5 @@ module.exports = {
   removeWapMsg,
   getTemplateById,
   getTemplateToEdit,
+  getWapByName,
 }
