@@ -11,6 +11,28 @@ async function getUser(req, res) {
         res.status(500).send({ err: 'Failed to get user' })
     }
 }
+async function getGoogleUser(req, res) {
+    const { OAuth2Client } = require("google-auth-library")
+    const client = new OAuth2Client()
+    console.log(req.body.access_token)
+
+    // Call this function to validate OAuth2 authorization code sent from client-side
+    async function verifyToken(token) {
+      client.setCredentials({ access_token: token })
+      const userinfo = await client.request({
+        url: "https://www.googleapis.com/oauth2/v3/userinfo",
+      });
+      return userinfo.data
+    }
+    
+    verifyToken(req.body.access_token)
+    .then((userInfo) => {
+        res.send(userInfo) 
+    })
+    .catch((error) => {
+        console.log(error)
+    })
+}
 
 async function getUsers(req, res) {
     try {
@@ -51,5 +73,6 @@ module.exports = {
     getUser,
     getUsers,
     deleteUser,
-    updateUser
+    updateUser,
+    getGoogleUser
 }
