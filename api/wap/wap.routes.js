@@ -3,7 +3,7 @@ const { requireAuth, requireAdmin } = require('../../middlewares/requireAuth.mid
 const { log } = require('../../middlewares/logger.middleware')
 const { getTemplateToEdit, getTemplates, getTemplateById, getWaps,
         getWapById, addWap, updateWap, removeWap,
-        addWapMsg, removeWapMsg, getWapByName } = require('./wap.controller')
+        addWapMsg, removeWapMsg, getWapByName,updateName } = require('./wap.controller')
 const router = express.Router()
 
 // middleware that is specific to this router
@@ -22,7 +22,11 @@ router.put('/:id', requireAuth, updateWap)
 router.delete('/:id', requireAuth, removeWap)
 // router.delete('/:id', requireAuth, requireAdmin, removeWap)
 
+router.post('/pathName', updateName)
+
 router.post('/:id/msg', requireAuth, addWapMsg)
 router.delete('/:id/msg/:msgId', requireAuth, removeWapMsg)
+
+
 
 module.exports = router

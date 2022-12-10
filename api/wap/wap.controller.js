@@ -84,21 +84,10 @@ async function getWapByName(req, res) {
     res.status(500).send({ err: 'Failed to get wap' })
   }
 }
-// async function getWapByUserId(req, res) {
-//   try {
-//     console.log('asd;lkd',req.params.id )
-//     const userId = req.params.id
-//     const wap = await wapService.getByUserId(userId)
-//     res.json(wap)
-//   } catch (err) {
-//     logger.error('Failed to get wap', err)
-//     res.status(500).send({ err: 'Failed to get wap' })
-//   }
-// }
 
 async function addWap(req, res) {
   const { loggedinUser } = req
-
+console.log(req.body)
   try {
     const wap = req.body
     wap.owner = loggedinUser
@@ -115,11 +104,10 @@ async function updateWap(req, res) {
   try {
     console.log('i am at before serivce updateWap')
     const wap = req.body
-    
+
     const updatedWap = await wapService.update(wap)
-    console.log('i am at after serivce updateWap')
-    console.log(wap._id)
-    console.log(wap.usersData.contacts)
+    // console.log('i am at after serivce updateWap')
+
     // broadcast({data:updatedWap,type:'updated-wap',id:soketId })
     res.json(updatedWap)
   } catch (err) {
@@ -137,6 +125,20 @@ async function removeWap(req, res) {
   } catch (err) {
     logger.error('Failed to remove wap', err)
     res.status(500).send({ err: 'Failed to remove wap' })
+  }
+}
+
+async function updateName(req, res) {
+  // console.log(req.body)
+  try {
+    const {pathName} = req.body
+
+    await wapService.updatePathName(pathName)
+    res.send(pathName)
+  } catch(err) {
+    console.log(err)
+    // throw new Error('name is taken')
+    res.status(500).send({ err: 'name exists' })
   }
 }
 
@@ -184,4 +186,5 @@ module.exports = {
   getTemplateById,
   getTemplateToEdit,
   getWapByName,
+  updateName
 }

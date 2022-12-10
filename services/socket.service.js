@@ -13,15 +13,36 @@ function setupSocketAPI(http) {
         socket.on('disconnect', socket => {
             logger.info(`Socket disconnected [id: ${socket.id}]`)
         })
-        socket.on('chat-set-topic', topic => {
-            if (socket.myTopic === topic) return
-            if (socket.myTopic) {
-                socket.leave(socket.myTopic)
-                logger.info(`Socket is leaving topic ${socket.myTopic} [id: ${socket.id}]`)
+        //connecting to createdby id room
+        socket.on('chat-set-room', room => {
+            console.log('room admin room', room)
+            if (socket.myRoom === room) return
+            if (socket.myRoom) {
+                socket.leave(socket.myRoom)
+                logger.info(`Socket is leaving topic ${socket.myRoom} [id: ${socket.id}]`)
             }
-            socket.join(topic)
-            socket.myTopic = topic
+            socket.join(room)
+            socket.myRoom = room
         })
+        socket.on('admin-send-msg', userId => {
+            console.log('room admin room', room)
+            if (socket.myRoom === room) return
+            if (socket.myRoom) {
+                socket.leave(socket.myRoom)
+                logger.info(`Socket is leaving topic ${socket.myRoom} [id: ${socket.id}]`)
+            }
+            socket.join(room)
+            socket.myRoom = room
+        })
+        // socket.on('chat-set-topic', topic => {
+        //     if (socket.myTopic === topic) return
+        //     if (socket.myTopic) {
+        //         socket.leave(socket.myTopic)
+        //         logger.info(`Socket is leaving topic ${socket.myTopic} [id: ${socket.id}]`)
+        //     }
+        //     socket.join(topic)
+        //     socket.myTopic = topic
+        // })
         socket.on('chat-send-msg', msg => {
             logger.info(`New chat msg from socket [id: ${socket.id}], emitting to topic ${socket.myTopic}`)
             // emits to all sockets:

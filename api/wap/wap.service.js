@@ -54,37 +54,37 @@ async function getByName(name) {
 // }
 function _buildCriteria(
     filterBy = {
-      isPublic: undefined,
-      userId: '',
-      isTemplate: undefined,
-      fullname: '',
+        isPublic: undefined,
+        userId: '',
+        isTemplate: undefined,
+        fullname: '',
     }
-  ) {
+) {
     const { isPublic, userId, isTemplate, fullname } = filterBy
-  
+
     const criteria = {}
-  
+
     if (isPublic !== undefined) {
-      criteria.isPublic = true
+        criteria.isPublic = true
     }
-  
+
     if (isTemplate !== undefined) {
-      criteria.isTemplate = true
+        criteria.isTemplate = true
     }
-  
+
     if (userId) {
-      // criteria.createdBy = { _id: userId }
-      console.log('userId')
-      criteria['createdBy._id'] = userId
+        // criteria.createdBy = { _id: userId }
+        console.log('userId')
+        criteria['createdBy._id'] = userId
     }
-  
+
     if (fullname) {
-      criteria['createdBy.fullname'] = fullname
+        criteria['createdBy.fullname'] = fullname
     }
-  
+
     return criteria
-  }
-  
+}
+
 
 async function getTemplateToEdit(templateId) {
     try {
@@ -129,8 +129,28 @@ async function update(wap) {
         const id = wap._id
         delete wap._id
         await collection.updateOne({ _id: ObjectId(id) }, { $set: wap })
-        console.log(wap, 'kabbucha')
+        // console.log(wap, 'kabbucha')
         return wap
+    } catch (err) {
+        console.log(err);
+        // logger.error(`cannot update wap ${wapId}`, err)
+        throw err
+    }
+}
+async function updatePathName(pathName) {
+    try {
+        console.log('pathName', pathName)
+        const collection = await dbService.getCollection('pathName')
+        // console.log('collection', collection)
+        // wap = JSON.parse(JSON.stringify(wap))
+        // const id = wap._id
+        // delete wap._id
+        const name = await collection.find({ pathName:pathName }).toArray()
+        console.log('name, name', name)
+        if (name.length) throw new Error('name already exist')
+        await collection.insertOne({ pathName:pathName })
+        console.log(pathName, 'kabbucha')
+        return pathName
     } catch (err) {
         console.log(err);
         // logger.error(`cannot update wap ${wapId}`, err)
@@ -153,7 +173,7 @@ async function addWapMsg(wapId, msg) {
 async function removeWapMsg(wapId, msgId) {
     try {
         const collection = await dbService.getCollection('wap')
-        await collection.updateOne({ _id: ObjectId(wapId) }, { $pull: { msgs: {id: msgId} } })
+        await collection.updateOne({ _id: ObjectId(wapId) }, { $pull: { msgs: { id: msgId } } })
         return msgId
     } catch (err) {
         logger.error(`cannot add wap msg ${wapId}`, err)
@@ -170,5 +190,6 @@ module.exports = {
     addWapMsg,
     removeWapMsg,
     getTemplateToEdit,
-    getByName
+    getByName,
+    updatePathName
 }
