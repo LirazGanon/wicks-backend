@@ -10,7 +10,8 @@ module.exports = {
     getByUsername,
     remove,
     update,
-    add
+    add,
+    getUserByGoogle
 }
 
 async function query(filterBy = {}) {
@@ -51,6 +52,32 @@ async function getById(userId) {
         throw err
     }
 }
+
+async function getUserByGoogle(googleUser) {
+    try {
+        const collection = await dbService.getCollection('user')
+        const user = await collection.findOne({ sub: googleUser.sub })
+        if (!user) {
+            const user = {
+                username: googleUser.given_name,
+                password: '',
+                fullname: googleUser.name,
+                sub: googleUser.sub,
+                imgUrl: googleUser.picture,
+            }
+            
+            return add(user)
+        }
+        console.log('hi sub')
+        return user
+    } catch (err) {
+        logger.error(`while finding google user ${googleUser}`, err)
+        throw err
+    }
+}
+
+
+
 async function getByUsername(username) {
     try {
         const collection = await dbService.getCollection('user')
@@ -92,9 +119,11 @@ async function update(user) {
 async function add(user) {
     try {
         // peek only updatable fields!
+        console.log(user)
         const userToAdd = {
             username: user.username,
             password: user.password,
+            sub: user.sub || '',
             fullname: user.fullname,
             imgUrl: user.imgUrl,
             // score: 100
