@@ -15,7 +15,7 @@ function setupSocketAPI(http) {
         })
         //connecting to createdby id room
         socket.on('chat-set-room', room => {
-            console.log('room admin room', room)
+            console.log('room admin roomdddddddddddddddddd', room)
             if (socket.myRoom === room) return
             if (socket.myRoom) {
                 socket.leave(socket.myRoom)
@@ -25,7 +25,7 @@ function setupSocketAPI(http) {
             socket.myRoom = room
         })
         socket.on('admin-send-msg', userId => {
-            console.log('room admin room', room)
+            // console.log('room admin room', room)
             if (socket.myRoom === room) return
             if (socket.myRoom) {
                 socket.leave(socket.myRoom)
@@ -34,15 +34,6 @@ function setupSocketAPI(http) {
             socket.join(room)
             socket.myRoom = room
         })
-        // socket.on('chat-set-topic', topic => {
-        //     if (socket.myTopic === topic) return
-        //     if (socket.myTopic) {
-        //         socket.leave(socket.myTopic)
-        //         logger.info(`Socket is leaving topic ${socket.myTopic} [id: ${socket.id}]`)
-        //     }
-        //     socket.join(topic)
-        //     socket.myTopic = topic
-        // })
         socket.on('chat-send-msg', msg => {
             logger.info(`New chat msg from socket [id: ${socket.id}], emitting to topic ${socket.myTopic}`)
             // emits to all sockets:
@@ -63,6 +54,30 @@ function setupSocketAPI(http) {
             logger.info(`Removing socket.userId for socket [id: ${socket.id}]`)
             delete socket.userId
         })
+        socket.on('lead-sended', ({room, contact, wapId}) => {
+            console.log('lead sended', room)
+            if (socket.myRoom === room) return
+            if (socket.myRoom) {
+                socket.leave(socket.myRoom)
+                logger.info(`Socket is leaving room ${socket.myRoom} [id: ${socket.id}]`)
+            }
+            socket.join(room)
+            socket.myRoom = room
+                // console.log('contact', contact, 'id', room)
+                // console.log('idddddddddddddd', {id:wapId})
+
+                broadcast({
+                    type: 'lead-added',
+                    data: {contact, wapId},
+                    room: socket.myRoom,
+                    userId: socket.id
+                })
+                
+            // }
+
+
+        })
+        
         socket.on('user-entered-editor', wapId => {
             if (socket.currEditor === wapId) return
             if (socket.currEditor) {
@@ -85,7 +100,7 @@ function setupSocketAPI(http) {
         })
         socket.on('set-wap', (wap) => {
 
-            console.log(socket.currEditor, 'i am here and guy too')
+            // console.log(socket.currEditor, 'i am here and guy too')
             broadcast({
                 type: 'updated-wap',
                 data: wap,
@@ -125,10 +140,10 @@ async function broadcast({ type, data, room = null, userId }) {
         // logger.info(`Broadcast to room ${room} excluding user: ${userId}`)
         excludedSocket.broadcast.to(room).emit(type, data)
     } else if (excludedSocket) {
-        // logger.info(`Broadcast to all excluding user: ${userId}`)
+        logger.info(`Broadcast to all excluding user: ${userId}`)
         excludedSocket.broadcast.emit(type, data)
     } else if (room) {
-        // logger.info(`Emit to room: ${room}`)
+        logger.info(`Emit to room: ${room}`)
         gIo.to(room).emit(type, data)
     } else {
         // console.log(type)
