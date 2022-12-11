@@ -34,12 +34,13 @@ function setupSocketAPI(http) {
             socket.join(room)
             socket.myRoom = room
         })
-        socket.on('chat-send-msg', msg => {
-            logger.info(`New chat msg from socket [id: ${socket.id}], emitting to topic ${socket.myTopic}`)
+        socket.on('chat-send-msg', data => {
+            logger.info(`New chat msg from socket [id: ${socket.id}], emitting to topic ${socket.myRoom}`)
             // emits to all sockets:
             // gIo.emit('chat addMsg', msg)
             // emits only to sockets in the same room
-            gIo.to(socket.myTopic).emit('chat-add-msg', msg)
+            console.log(data.msg)
+            gIo.to(socket.myRoom).emit('chat-add-msg', data.msg)
         })
         socket.on('user-watch', userId => {
             logger.info(`user-watch from socket [id: ${socket.id}], on user ${userId}`)
@@ -54,7 +55,7 @@ function setupSocketAPI(http) {
             logger.info(`Removing socket.userId for socket [id: ${socket.id}]`)
             delete socket.userId
         })
-        socket.on('lead-sended', ({room, contact, wapId}) => {
+        socket.on('lead-sended', ({room, contact, wapId, wap}) => {
             console.log('lead sended', room)
             if (socket.myRoom === room) return
             if (socket.myRoom) {
@@ -68,7 +69,7 @@ function setupSocketAPI(http) {
 
                 broadcast({
                     type: 'lead-added',
-                    data: {contact, wapId},
+                    data: {contact, wapId, wap},
                     room: socket.myRoom,
                     userId: socket.id
                 })
