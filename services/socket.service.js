@@ -55,28 +55,23 @@ function setupSocketAPI(http) {
             logger.info(`Removing socket.userId for socket [id: ${socket.id}]`)
             delete socket.userId
         })
-        socket.on('lead-sended', ({room, contact, wapId, wap}) => {
+        socket.on('lead-sended', ({room, contact, wapId, wap, isMessage}) => {
             console.log('lead sended', room)
-            if (socket.myRoom === room) return
-            if (socket.myRoom) {
+            // if (socket.myRoom === room) return
+            if (socket.myRoom!==room) {
                 socket.leave(socket.myRoom)
                 logger.info(`Socket is leaving room ${socket.myRoom} [id: ${socket.id}]`)
             }
             socket.join(room)
             socket.myRoom = room
                 // console.log('contact', contact, 'id', room)
-                // console.log('idddddddddddddd', {id:wapId})
-
+                // console.log('idddddddddddddd', socket.myRoom)
                 broadcast({
                     type: 'lead-added',
-                    data: {contact, wapId, wap},
-                    room: socket.myRoom,
+                    data: {contact, wapId, wap, isMessage},
+                    room:socket.myRoom,
                     userId: socket.id
                 })
-                
-            // }
-
-
         })
         
         socket.on('user-entered-editor', wapId => {
@@ -91,6 +86,7 @@ function setupSocketAPI(http) {
         // improve the id and everything
         socket.on('user-mouse-move', (pointerLoc) => {
             const data = {id:socket.id, loc:pointerLoc}
+            console.log('baba')
             broadcast({
                 type: 'mouse-move',
                 data,
@@ -142,6 +138,7 @@ async function broadcast({ type, data, room = null, userId }) {
         excludedSocket.broadcast.to(room).emit(type, data)
     } else if (excludedSocket) {
         logger.info(`Broadcast to all excluding user: ${userId}`)
+        console.log('a;sdlfk;asldkf;asldkf;alskdflaskdjf;aslkdfj;asldkfjas;lkdfja;sldkjf;asldkjf;asldkfj', room)
         excludedSocket.broadcast.emit(type, data)
     } else if (room) {
         logger.info(`Emit to room: ${room}`)
