@@ -18,7 +18,6 @@ async function query(filterBy = { txt: '' }) {
 }
 async function getById(templateId) {
     try {
-        console.log(templateId)
         const collection = await dbService.getCollection('template')
         const template = collection.findOne({ _id: ObjectId(templateId) })
         return template

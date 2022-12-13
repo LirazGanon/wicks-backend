@@ -33,7 +33,6 @@ async function getTemplates(req, res) {
 }
 
 async function getTemplateById(req, res) {
-  console.log('hi ', req.params.id)
   try {
     const templateId = req.params.id
     const template = await templateService.getById(templateId)
@@ -65,7 +64,6 @@ async function getTemplateToEdit(req, res) {
 
 async function getWapById(req, res) {
   try {
-    console.log(req.params, 'liraz')
     const wapId = req.params.id
     const wap = await wapService.getById(wapId)
     res.json(wap)
@@ -87,7 +85,6 @@ async function getWapByName(req, res) {
 
 async function addWap(req, res) {
   const { loggedinUser } = req
-console.log(req.body)
   try {
     const wap = req.body
     wap.owner = loggedinUser
@@ -102,7 +99,6 @@ console.log(req.body)
 
 async function updateWap(req, res) {
   try {
-    console.log('i am at before serivce updateWap')
     const wap = req.body
 
     const updatedWap = await wapService.update(wap)

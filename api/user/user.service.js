@@ -68,7 +68,6 @@ async function getUserByGoogle(googleUser) {
             
             return add(user)
         }
-        console.log('hi sub')
         return user
     } catch (err) {
         logger.error(`while finding google user ${googleUser}`, err)
@@ -119,7 +118,6 @@ async function update(user) {
 async function add(user) {
     try {
         // peek only updatable fields!
-        console.log(user)
         const userToAdd = {
             username: user.username,
             password: user.password,

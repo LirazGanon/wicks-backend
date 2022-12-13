@@ -42,7 +42,6 @@ async function remove(cmpId) {
 async function add(cmp) {
     try {
         const collection = await dbService.getCollection('cmp')
-        console.log(cmp)
         await collection.insertOne(cmp)
         return cmp
     } catch (err) {
@@ -58,7 +57,6 @@ async function update(cmp) {
         }
         const collection = await dbService.getCollection('cmp')
         await collection.updateOne({ _id: ObjectId(cmp._id) }, { $set: cmpToSave })
-        console.log(cmp)
         return cmp
     } catch (err) {
         logger.error(`cannot update cmp ${cmpId}`, err)

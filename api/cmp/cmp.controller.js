@@ -21,7 +21,6 @@ async function getCmpById(req, res) {
     const cmpId = req.params.id
     const cmp = await cmpService.getById(cmpId)
     res.json(cmp)
-    console.log(cmp)
   } catch (err) {
     logger.error('Failed to get cmp', err)
     res.status(500).send({ err: 'Failed to get cmp' })

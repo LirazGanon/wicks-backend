@@ -6,7 +6,6 @@ const ObjectId = require('mongodb').ObjectId
 // TODO: FILTER BY USER ID
 async function query(filterBy) {
     const criteria = _buildCriteria(filterBy)
-    console.log()
     try {
         // const criteria = {
         //     // vendor: { $regex: filterBy.txt, $options: 'i' }
@@ -32,7 +31,6 @@ async function getById(wapId) {
 }
 async function getByName(name) {
     try {
-        console.log(name)
         const collection = await dbService.getCollection('wap')
         const wap = collection.findOne({ pathName: name })
         return wap
@@ -74,7 +72,6 @@ function _buildCriteria(
 
     if (userId) {
         // criteria.createdBy = { _id: userId }
-        console.log('userId')
         criteria['createdBy._id'] = userId
     }
 
@@ -123,7 +120,6 @@ async function add(wap) {
 
 async function update(wap) {
     try {
-        console.log(wap)
         const collection = await dbService.getCollection('wap')
         wap = JSON.parse(JSON.stringify(wap))
         const id = wap._id
@@ -139,17 +135,14 @@ async function update(wap) {
 }
 async function updatePathName(pathName) {
     try {
-        console.log('pathName', pathName)
         const collection = await dbService.getCollection('pathName')
         // console.log('collection', collection)
         // wap = JSON.parse(JSON.stringify(wap))
         // const id = wap._id
         // delete wap._id
         const name = await collection.find({ pathName:pathName }).toArray()
-        console.log('name, name', name)
         if (name.length) throw new Error('name already exist')
         await collection.insertOne({ pathName:pathName })
-        console.log(pathName, 'kabbucha')
         return pathName
     } catch (err) {
         console.log(err);

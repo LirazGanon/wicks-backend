@@ -15,7 +15,6 @@ async function getUser(req, res) {
 async function getGoogleUser(req, res) {
     const { OAuth2Client } = require("google-auth-library")
     const client = new OAuth2Client()
-    console.log(req.body.access_token)
 
     // Call this function to validate OAuth2 authorization code sent from client-side
     async function verifyToken(token) {
@@ -29,7 +28,6 @@ async function getGoogleUser(req, res) {
 
     verifyToken(req.body.access_token)
         .then((user) => {
-            console.log(user)
             res.send(user)
         })
         .catch((error) => {

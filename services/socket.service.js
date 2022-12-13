@@ -15,7 +15,7 @@ function setupSocketAPI(http) {
         })
         //connecting to createdby id room
         socket.on('chat-set-room', room => {
-            console.log('room admin roomdddddddddddddddddd', room)
+            console.log('room admin room', room)
             if (socket.myRoom === room) return
             if (socket.myRoom) {
                 socket.leave(socket.myRoom)
@@ -39,7 +39,6 @@ function setupSocketAPI(http) {
             // emits to all sockets:
             // gIo.emit('chat addMsg', msg)
             // emits only to sockets in the same room
-            console.log(data.msg)
             gIo.to(socket.myRoom).emit('chat-add-msg', data.msg)
         })
         socket.on('user-watch', userId => {
@@ -56,7 +55,6 @@ function setupSocketAPI(http) {
             delete socket.userId
         })
         socket.on('lead-sended', ({room, contact, wapId, wap, isMessage}) => {
-            console.log('lead sended', room)
             // if (socket.myRoom === room) return
             if (socket.myRoom!==room) {
                 socket.leave(socket.myRoom)
@@ -81,12 +79,10 @@ function setupSocketAPI(http) {
             }
             socket.join(wapId)
             socket.currEditor = wapId
-            console.log(socket.currEditor, 'getting in a room')
         })
         // improve the id and everything
         socket.on('user-mouse-move', (pointerLoc) => {
             const data = {id:socket.id, loc:pointerLoc}
-            console.log('baba')
             broadcast({
                 type: 'mouse-move',
                 data,
@@ -138,7 +134,6 @@ async function broadcast({ type, data, room = null, userId }) {
         excludedSocket.broadcast.to(room).emit(type, data)
     } else if (excludedSocket) {
         logger.info(`Broadcast to all excluding user: ${userId}`)
-        console.log('a;sdlfk;asldkf;asldkf;alskdflaskdjf;aslkdfj;asldkfjas;lkdfja;sldkjf;asldkjf;asldkfj', room)
         excludedSocket.broadcast.emit(type, data)
     } else if (room) {
         logger.info(`Emit to room: ${room}`)
@@ -165,11 +160,11 @@ async function _getAllSockets() {
 
 async function _printSockets() {
     const sockets = await _getAllSockets()
-    console.log(`Sockets: (count: ${sockets.length}):`)
+    // console.log(`Sockets: (count: ${sockets.length}):`)
     sockets.forEach(_printSocket)
 }
 function _printSocket(socket) {
-    console.log(`Socket - socketId: ${socket.id} userId: ${socket.userId}`)
+    // console.log(`Socket - socketId: ${socket.id} userId: ${socket.userId}`)
 }
 
 module.exports = {
